@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#F5F7FA">
+
+    <!-- Camera Preview -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <androidx.camera.view.PreviewView
+            android:id="@+id/previewView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <ImageView
+            android:id="@+id/capturedImage"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="fitCenter"
+            android:visibility="gone" />
+
+        <!-- KTP frame overlay guide -->
+        <View
+            android:layout_width="320dp"
+            android:layout_height="200dp"
+            android:layout_gravity="center"
+            android:background="@android:color/transparent"
+            android:foreground="@drawable/ktp_frame_overlay" />
+    </FrameLayout>
+
+    <!-- Status -->
+    <TextView
+        android:id="@+id/scanStatus"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="📷 Arahkan kamera ke KTP"
+        android:textSize="14sp"
+        android:textColor="#1A3554"
+        android:gravity="center"
+        android:padding="12dp"
+        android:background="#FFFFFF" />
+
+    <!-- OCR Preview -->
+    <TextView
+        android:id="@+id/ocrPreview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:textSize="12sp"
+        android:fontFamily="monospace"
+        android:padding="12dp"
+        android:textColor="#1A3554"
+        android:maxLines="8" />
+
+    <!-- Buttons -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="12dp"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btnGallery"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:text="🖼️ Galeri"
+            android:textAllCaps="false"
+            android:backgroundTint="#757575"
+            android:textColor="#FFFFFF"
+            android:layout_marginEnd="4dp" />
+
+        <Button
+            android:id="@+id/btnCapture"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:text="📸 Capture"
+            android:textAllCaps="false"
+            android:backgroundTint="#00C878"
+            android:textColor="#FFFFFF"
+            android:layout_marginHorizontal="4dp" />
+
+        <Button
+            android:id="@+id/btnConfirm"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:text="✅ Pakai"
+            android:textAllCaps="false"
+            android:backgroundTint="#2196F3"
+            android:textColor="#FFFFFF"
+            android:layout_marginStart="4dp"
+            android:enabled="false" />
+    </LinearLayout>
+
+</LinearLayout>
