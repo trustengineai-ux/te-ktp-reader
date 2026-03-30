@@ -6,8 +6,7 @@ pluginManagement {
     }
 }
 
-dependencyResolutionManagement {
-    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+dependencyResolution {
     repositories {
         google()
         mavenCentral()

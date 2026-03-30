@@ -88,8 +88,16 @@ class MainActivity : AppCompatActivity() {
         
         btnChipRead.setOnClickListener {
             waitingForNfc = true
-            statusText.text = "🔬 Mode Chip Read (R&D) — Tempelkan e-KTP..."
-            Toast.makeText(this, "Mode R&D: Mencoba baca data chip e-KTP", Toast.LENGTH_SHORT).show()
+            statusText.text = "🔬 Chip Read — Tempelkan e-KTP ke NFC..."
+            Toast.makeText(this, "Tempelkan e-KTP. Jangan geser sampai selesai!", Toast.LENGTH_LONG).show()
+        }
+        
+        // Long press result to copy log
+        resultText.setOnLongClickListener {
+            val clipboard = getSystemService(android.content.Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager
+            clipboard.setPrimaryClip(android.content.ClipData.newPlainText("NFC Log", resultText.text))
+            Toast.makeText(this, "📋 Log disalin!", Toast.LENGTH_SHORT).show()
+            true
         }
         
         btnViewResult.setOnClickListener {
@@ -144,22 +152,42 @@ class MainActivity : AppCompatActivity() {
             ${nfcResult.atr?.let { "\nATR: $it" } ?: ""}
         """.trimIndent()
         
-        // Opsi B: Try full chip read if in R&D mode
-        if (statusText.text.contains("R&D")) {
+        // Opsi B: Full chip read attempt
+        if (statusText.text.contains("R&D") || statusText.text.contains("Chip")) {
+            resultMsg += "\n\n🔬 Memulai Full Chip Read..."
+            resultText.text = resultMsg
+            
             val chipResult = EktpChipReader.readChipData(
                 tag, 
                 nik = currentKtpData.nik.ifEmpty { null },
-                dob = currentKtpData.tanggalLahir.ifEmpty { null }
+                dob = currentKtpData.tanggalLahir.ifEmpty { null },
+                expiry = currentKtpData.berlakuHingga.ifEmpty { null }
             )
             
-            resultMsg += "\n\n🔬 Chip Read Log:\n"
+            resultMsg += "\n\n🔬 ═══ CHIP READ LOG ═══\n"
             resultMsg += chipResult.debugLog.joinToString("\n")
             
             if (chipResult.success) {
-                resultMsg += "\n\n✅ CHIP DATA READ SUCCESS!"
+                resultMsg += "\n\n🎉 CHIP DATA READ SUCCESS!"
+                if (chipResult.successHypothesis != null) {
+                    resultMsg += "\n🔑 Key: ${chipResult.successHypothesis}"
+                }
                 currentKtpData.chipReadSuccess = true
+                
+                // Merge chip data
+                chipResult.data?.let { chipData ->
+                    if (chipData.nama.isNotEmpty()) currentKtpData.nama = chipData.nama
+                    if (chipData.nik.isNotEmpty()) currentKtpData.nik = chipData.nik
+                }
+                
+                // Save face image if found
+                chipResult.faceImageBytes?.let { faceBytes ->
+                    resultMsg += "\n🖼️ Foto wajah: ${faceBytes.size} bytes"
+                    // TODO: Save to file and display
+                }
             } else {
-                resultMsg += "\n\n${chipResult.error}"
+                resultMsg += "\n\n❌ ${chipResult.error}"
+                resultMsg += "\n\nℹ️ Kirim log ini ke developer untuk analisis"
             }
         }
         
